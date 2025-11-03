@@ -1,0 +1,597 @@
+/*
+Hi-Low Card Game Stylesheet
+Responsive design for desktop and mobile
+Color scheme: Dark theme with accent colors for wins/losses
+*/
+
+/* ============================================================================
+   CSS Reset and Base Styles
+   ============================================================================ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* Color palette */
+    --primary-color: #2563eb;      /* Blue */
+    --secondary-color: #64748b;    /* Gray */
+    --success-color: #10b981;      /* Green for wins */
+    --danger-color: #ef4444;       /* Red for losses */
+    --background-dark: #0f172a;    /* Dark blue-gray */
+    --background-light: #1e293b;   /* Lighter dark blue */
+    --text-primary: #f1f5f9;       /* Light gray */
+    --text-secondary: #94a3b8;     /* Medium gray */
+    --border-color: #334155;       /* Dark border */
+
+    /* Spacing */
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 1rem;
+    --spacing-md: 1.5rem;
+    --spacing-lg: 2rem;
+    --spacing-xl: 3rem;
+
+    /* Typography */
+    --font-main: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: 'Courier New', monospace;
+}
+
+body {
+    font-family: var(--font-main);
+    background: linear-gradient(135deg, var(--background-dark) 0%, #1a1a2e 100%);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: var(--spacing-sm);
+    line-height: 1.6;
+}
+
+/* ============================================================================
+   Layout Containers
+   ============================================================================ */
+
+.container {
+    background-color: var(--background-light);
+    border-radius: 1rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    padding: var(--spacing-lg);
+    max-width: 600px;
+    width: 100%;
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================================================
+   Header Styles
+   ============================================================================ */
+
+.header {
+    text-align: center;
+    margin-bottom: var(--spacing-lg);
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: var(--spacing-md);
+}
+
+.header h1 {
+    font-size: 2.5rem;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-xs);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-top: var(--spacing-xs);
+}
+
+.player-name {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-top: var(--spacing-xs);
+}
+
+.player-name strong {
+    color: var(--primary-color);
+}
+
+/* ============================================================================
+   Landing Page Styles
+   ============================================================================ */
+
+.rules-box {
+    background-color: var(--background-dark);
+    border-radius: 0.5rem;
+    padding: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+    border-left: 4px solid var(--primary-color);
+}
+
+.rules-box h2 {
+    font-size: 1.5rem;
+    margin-bottom: var(--spacing-sm);
+    color: var(--primary-color);
+}
+
+.rules-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.rules-list li {
+    padding: var(--spacing-xs) 0;
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+.rules-list li strong {
+    color: var(--text-primary);
+}
+
+/* ============================================================================
+   Form Styles
+   ============================================================================ */
+
+.name-entry {
+    margin-bottom: var(--spacing-lg);
+}
+
+.start-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.form-group label {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.form-group input[type="text"] {
+    padding: var(--spacing-sm);
+    font-size: 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 0.5rem;
+    background-color: var(--background-dark);
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+}
+
+.form-group input[type="text"]:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+.form-group input[type="text"]::placeholder {
+    color: var(--text-secondary);
+}
+
+/* ============================================================================
+   Button Styles
+   ============================================================================ */
+
+.btn {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: 1.1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-height: 48px; /* WCAG 2.5.5 Level AAA compliant (48x48px touch target) */
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #1d4ed8;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+}
+
+.btn-secondary {
+    background-color: var(--secondary-color);
+    color: white;
+    margin: 0 var(--spacing-xs);
+}
+
+.btn-secondary:hover {
+    background-color: #475569;
+    transform: translateY(-2px);
+}
+
+.btn-higher {
+    background-color: var(--success-color);
+    color: white;
+    font-size: 1.2rem;
+}
+
+.btn-higher:hover {
+    background-color: #059669;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+.btn-lower {
+    background-color: var(--danger-color);
+    color: white;
+    font-size: 1.2rem;
+}
+
+.btn-lower:hover {
+    background-color: #dc2626;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ============================================================================
+   Card Display
+   ============================================================================ */
+
+.card-display {
+    text-align: center;
+    margin: var(--spacing-lg) 0;
+}
+
+.card-label {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: var(--spacing-sm);
+}
+
+.card {
+    display: inline-block;
+    font-size: 5rem;
+    font-weight: bold;
+    background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
+    color: #1e293b;
+    width: 150px;
+    height: 200px;
+    line-height: 200px;
+    border-radius: 1rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    margin: var(--spacing-md) 0;
+    transition: transform 0.3s ease;
+    font-family: var(--font-mono);
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+.card-high {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    color: #92400e;
+}
+
+.card-low {
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    color: #1e3a8a;
+}
+
+.card-hint {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-top: var(--spacing-sm);
+    font-style: italic;
+}
+
+/* ============================================================================
+   Prediction Buttons
+   ============================================================================ */
+
+.prediction-buttons {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-md);
+    margin: var(--spacing-lg) 0;
+}
+
+.prediction-buttons form {
+    flex: 1;
+    max-width: 200px;
+}
+
+.prediction-buttons .btn {
+    width: 100%;
+}
+
+/* ============================================================================
+   Result Notification
+   ============================================================================ */
+
+.result-notification {
+    padding: var(--spacing-md);
+    border-radius: 0.5rem;
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: var(--spacing-lg);
+    animation: slideDown 0.5s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.result-notification.win {
+    background-color: rgba(16, 185, 129, 0.2);
+    border: 2px solid var(--success-color);
+    color: var(--success-color);
+}
+
+.result-notification.loss {
+    background-color: rgba(239, 68, 68, 0.2);
+    border: 2px solid var(--danger-color);
+    color: var(--danger-color);
+}
+
+/* ============================================================================
+   Statistics Display
+   ============================================================================ */
+
+.stats-box {
+    background-color: var(--background-dark);
+    border-radius: 0.5rem;
+    padding: var(--spacing-md);
+    margin: var(--spacing-lg) 0;
+}
+
+.stats-box h2 {
+    font-size: 1.3rem;
+    text-align: center;
+    margin-bottom: var(--spacing-md);
+    color: var(--text-primary);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-md);
+}
+
+.stat-item {
+    text-align: center;
+    padding: var(--spacing-sm);
+    background-color: var(--background-light);
+    border-radius: 0.5rem;
+    border: 2px solid var(--border-color);
+}
+
+.stat-wins {
+    border-color: var(--success-color);
+}
+
+.stat-losses {
+    border-color: var(--danger-color);
+}
+
+.stat-total {
+    border-color: var(--secondary-color);
+}
+
+.stat-percentage {
+    border-color: var(--primary-color);
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-xs);
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* ============================================================================
+   Game Controls
+   ============================================================================ */
+
+.game-controls {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    margin: var(--spacing-lg) 0;
+    flex-wrap: wrap;
+}
+
+/* ============================================================================
+   Card Reference
+   ============================================================================ */
+
+.card-reference {
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--border-color);
+}
+
+.card-reference details {
+    background-color: var(--background-dark);
+    border-radius: 0.5rem;
+    padding: var(--spacing-sm);
+}
+
+.card-reference summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--text-secondary);
+    padding: var(--spacing-xs);
+    user-select: none;
+}
+
+.card-reference summary:hover {
+    color: var(--primary-color);
+}
+
+.reference-content {
+    padding: var(--spacing-sm);
+    color: var(--text-secondary);
+}
+
+.card-ranks {
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    background-color: var(--background-light);
+    padding: var(--spacing-sm);
+    border-radius: 0.25rem;
+    margin: var(--spacing-sm) 0;
+    text-align: center;
+}
+
+/* ============================================================================
+   Footer
+   ============================================================================ */
+
+.footer {
+    text-align: center;
+    margin-top: var(--spacing-lg);
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--border-color);
+}
+
+.small-text {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+/* ============================================================================
+   Responsive Design - Mobile
+   ============================================================================ */
+
+@media (max-width: 768px) {
+    .header h1 {
+        font-size: 2rem;
+    }
+
+    .card {
+        font-size: 4rem;
+        width: 120px;
+        height: 160px;
+        line-height: 160px;
+    }
+
+    .prediction-buttons {
+        flex-direction: column;
+    }
+
+    .prediction-buttons form {
+        max-width: 100%;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: var(--spacing-sm);
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+    }
+
+    .game-controls {
+        flex-direction: column;
+    }
+
+    .game-controls .btn {
+        width: 100%;
+        margin: var(--spacing-xs) 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: var(--spacing-md);
+    }
+
+    .header h1 {
+        font-size: 1.75rem;
+    }
+
+    .card {
+        font-size: 3rem;
+        width: 100px;
+        height: 140px;
+        line-height: 140px;
+    }
+}
+
+/* ============================================================================
+   Accessibility Enhancements
+   ============================================================================ */
+
+/* Focus visible for keyboard navigation */
+*:focus-visible {
+    outline: 3px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* Reduced motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .btn {
+        border: 2px solid currentColor;
+    }
+
+    .card {
+        border: 3px solid #000;
+    }
+}

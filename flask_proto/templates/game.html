@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hi-Low Game - {{ player_name }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- Main game container -->
+    <div class="container game-container">
+        <!-- Header with player name -->
+        <div class="header">
+            <h1>🎴 Hi-Low Game</h1>
+            <p class="player-name">Player: <strong>{{ player_name }}</strong></p>
+        </div>
+
+        <!-- Result notification (shown after prediction) -->
+        {% if last_result %}
+        <div class="result-notification {{ last_result }}">
+            {% if last_result == 'win' %}
+                ✓ Correct! Previous card was {{ last_card }}
+            {% else %}
+                ✗ Wrong! Previous card was {{ last_card }}
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- Current card display -->
+        <div class="card-display">
+            <div class="card-label">Current Card</div>
+            <div class="card {{ 'card-high' if current_card_value >= 10 else 'card-low' }}">
+                {{ current_card }}
+            </div>
+            <div class="card-hint">
+                Will the next card be higher or lower?
+            </div>
+        </div>
+
+        <!-- Prediction buttons -->
+        <div class="prediction-buttons">
+            <form action="{{ url_for('predict') }}" method="POST" style="display: inline;">
+                <input type="hidden" name="prediction" value="higher">
+                <button type="submit" class="btn btn-higher" aria-label="Predict higher">
+                    ⬆ Higher
+                </button>
+            </form>
+
+            <form action="{{ url_for('predict') }}" method="POST" style="display: inline;">
+                <input type="hidden" name="prediction" value="lower">
+                <button type="submit" class="btn btn-lower" aria-label="Predict lower">
+                    ⬇ Lower
+                </button>
+            </form>
+        </div>
+
+        <!-- Statistics display -->
+        <div class="stats-box">
+            <h2>Your Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-item stat-wins">
+                    <div class="stat-value">{{ wins }}</div>
+                    <div class="stat-label">Wins</div>
+                </div>
+                <div class="stat-item stat-losses">
+                    <div class="stat-value">{{ losses }}</div>
+                    <div class="stat-label">Losses</div>
+                </div>
+                <div class="stat-item stat-total">
+                    <div class="stat-value">{{ total_games }}</div>
+                    <div class="stat-label">Total</div>
+                </div>
+                <div class="stat-item stat-percentage">
+                    <div class="stat-value">{{ win_percentage }}%</div>
+                    <div class="stat-label">Win Rate</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game controls -->
+        <div class="game-controls">
+            <!-- Reset button with confirmation -->
+            <form action="{{ url_for('reset_game') }}" method="POST" onsubmit="return confirm('Are you sure you want to reset your statistics?');">
+                <button type="submit" class="btn btn-secondary" aria-label="Start new game">
+                    🔄 New Game
+                </button>
+            </form>
+
+            <!-- Return to home button -->
+            <a href="{{ url_for('index') }}" class="btn btn-secondary" aria-label="Return to home">
+                🏠 Home
+            </a>
+        </div>
+
+        <!-- Card reference guide -->
+        <div class="card-reference">
+            <details>
+                <summary>Card Rankings Reference</summary>
+                <div class="reference-content">
+                    <p><strong>Lowest to Highest:</strong></p>
+                    <p class="card-ranks">2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 10 → J → Q → K → A</p>
+                    <p class="small-text">Note: Ties (equal rank) count as losses</p>
+                </div>
+            </details>
+        </div>
+    </div>
+
+    <!-- Client-side JavaScript for enhanced UX (optional) -->
+    <script>
+        // Prevent double-submission of prediction buttons
+        const forms = document.querySelectorAll('.prediction-buttons form');
+        forms.forEach(form => {
+            form.addEventListener('submit', function(e) {
+                // Disable all prediction buttons after submission
+                const buttons = document.querySelectorAll('.prediction-buttons button');
+                buttons.forEach(btn => {
+                    btn.disabled = true;
+                    btn.style.opacity = '0.6';
+                });
+            });
+        });
+
+        // Auto-hide result notification after 10 seconds (WCAG 2.2.1 compliant)
+        // Extended timeout gives users with disabilities adequate time to read content
+        const resultNotification = document.querySelector('.result-notification');
+        if (resultNotification) {
+            setTimeout(() => {
+                resultNotification.style.transition = 'opacity 0.5s';
+                resultNotification.style.opacity = '0';
+            }, 10000);  // 10 seconds for accessibility
+        }
+    </script>
+</body>
+</html>

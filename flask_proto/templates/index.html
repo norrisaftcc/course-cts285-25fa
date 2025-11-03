@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hi-Low Card Game</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <!-- Landing page container -->
+    <div class="container landing-container">
+        <!-- Game title and branding -->
+        <div class="header">
+            <h1>🎴 Hi-Low Card Game</h1>
+            <p class="subtitle">Guess if the next card is higher or lower!</p>
+        </div>
+
+        <!-- Game rules explanation -->
+        <div class="rules-box">
+            <h2>How to Play</h2>
+            <ul class="rules-list">
+                <li>🎯 Predict if the next card will be <strong>higher</strong> or <strong>lower</strong></li>
+                <li>📊 Card ranking: 2 (lowest) → A (highest)</li>
+                <li>🎲 Ties count as losses</li>
+                <li>📈 Track your win/loss statistics!</li>
+            </ul>
+        </div>
+
+        <!-- Player name entry form -->
+        <div class="name-entry">
+            <form action="{{ url_for('start_game') }}" method="POST" class="start-form">
+                <div class="form-group">
+                    <label for="player_name">Enter Your Name to Start</label>
+                    <input
+                        type="text"
+                        id="player_name"
+                        name="player_name"
+                        placeholder="Your name"
+                        maxlength="20"
+                        required
+                        autofocus
+                        pattern="^[A-Za-z0-9 ]+$"
+                        title="Only letters, numbers, and spaces allowed"
+                    >
+                </div>
+                <button type="submit" class="btn btn-primary">Start Game</button>
+            </form>
+        </div>
+
+        <!-- Footer with educational context -->
+        <div class="footer">
+            <p class="small-text">AlgoCratic Entertainment Division™ | Educational Project</p>
+        </div>
+    </div>
+</body>
+</html>
