@@ -120,13 +120,14 @@
             });
         });
 
-        // Auto-hide result notification after 3 seconds
+        // Auto-hide result notification after 10 seconds (WCAG 2.2.1 compliant)
+        // Extended timeout gives users with disabilities adequate time to read content
         const resultNotification = document.querySelector('.result-notification');
         if (resultNotification) {
             setTimeout(() => {
                 resultNotification.style.transition = 'opacity 0.5s';
                 resultNotification.style.opacity = '0';
-            }, 3000);
+            }, 10000);  // 10 seconds for accessibility
         }
     </script>
 </body>

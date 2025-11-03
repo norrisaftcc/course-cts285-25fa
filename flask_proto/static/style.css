@@ -200,7 +200,7 @@ body {
     border-radius: 0.5rem;
     cursor: pointer;
     transition: all 0.3s ease;
-    min-height: 44px; /* Touch-friendly minimum */
+    min-height: 48px; /* WCAG 2.5.5 Level AAA compliant (48x48px touch target) */
     text-decoration: none;
     display: inline-block;
     text-align: center;

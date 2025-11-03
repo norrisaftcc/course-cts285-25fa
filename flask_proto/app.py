@@ -13,6 +13,12 @@ from flask import Flask, render_template, request, session, redirect, url_for, j
 from flask_session import Session
 import random
 import os
+import re
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # ============================================================================
 # Flask Application Setup
@@ -21,7 +27,16 @@ import os
 app = Flask(__name__)
 
 # Secret key for session encryption (should be environment variable in production)
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
+SECRET_KEY = os.environ.get('SECRET_KEY')
+if not SECRET_KEY:
+    SECRET_KEY = 'dev-secret-key-change-in-production'
+    # Security warning: Log when using default secret key
+    logger.warning(
+        "WARNING: Using default SECRET_KEY. This is insecure for production! "
+        "Set the SECRET_KEY environment variable."
+    )
+
+app.config['SECRET_KEY'] = SECRET_KEY
 
 # Session configuration - stores session data on server filesystem
 app.config['SESSION_TYPE'] = 'filesystem'
@@ -203,7 +218,7 @@ def start_game():
     Initialize new game session with player name.
 
     Form Data:
-        player_name (str): Player's name (1-20 characters)
+        player_name (str): Player's name (1-20 characters, alphanumeric + spaces)
 
     Returns:
         Redirect to game page or back to landing with error
@@ -211,13 +226,20 @@ def start_game():
     # Get player name from form
     player_name = request.form.get('player_name', '').strip()
 
-    # Validate player name
+    # Validate player name - must not be empty
     if not player_name:
-        # TODO: Add flash message for better UX
+        logger.info("Player name validation failed: empty name")
+        return redirect(url_for('index'))
+
+    # Server-side validation: ensure name matches allowed pattern
+    # Only alphanumeric characters and spaces allowed
+    if not re.match(r'^[A-Za-z0-9 ]+$', player_name):
+        logger.info(f"Player name validation failed: invalid characters in '{player_name}'")
         return redirect(url_for('index'))
 
     # Limit name length to 20 characters
-    player_name = player_name[:20]
+    if len(player_name) > 20:
+        player_name = player_name[:20]
 
     # Initialize new game session
     initialize_session(player_name)
@@ -353,6 +375,18 @@ def stats():
 # ============================================================================
 
 if __name__ == '__main__':
+    # Configuration from environment variables for security
+    DEBUG_MODE = os.environ.get('FLASK_DEBUG', 'True').lower() in ('true', '1', 'yes')
+    HOST = os.environ.get('FLASK_HOST', '0.0.0.0')
+    PORT = int(os.environ.get('FLASK_PORT', '5000'))
+
+    # Security warning for production deployment
+    if DEBUG_MODE and HOST == '0.0.0.0':
+        logger.warning(
+            "WARNING: Running with debug=True and host='0.0.0.0' exposes debug console "
+            "to external networks. Only use this configuration in development environments. "
+            "For production, set FLASK_DEBUG=False"
+        )
+
     # Run Flask development server
-    # Debug mode enabled for development (disable in production)
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=DEBUG_MODE, host=HOST, port=PORT)
