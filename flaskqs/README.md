@@ -2,10 +2,12 @@
 
 # Setting up virtual environment
 cd flaskqs
+
 python -m venv venv
+
 source venv/bin/activate
 
-note this is for a Codespace or other Linux environment.
+(note this is for a Codespace or other Linux environment.)
 
 # Installing flask
 
