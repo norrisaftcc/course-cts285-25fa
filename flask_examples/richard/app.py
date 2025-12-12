@@ -1,34 +1,43 @@
 """
-To-Do
-arrival date, departure date, calc num of nights based on values. incorporate check boxes with url's 
-end goal--email trip summary to individual.  Add email address to form.
+Hale Koa Hotel Booking System
+Author: Richard Comins
 
- 
-    """
+A Flask web application for planning and calculating vacation costs
+at the Hale Koa Hotel in Hawaii.
+"""
 
 from flask import Flask, render_template, request
-from datetime import datetime, timedelta #for date calculations
+from datetime import datetime, timedelta
 
-#from flask_mail import Mail, Message
+# Create the Flask application
+app = Flask(__name__)
 
-#create a flask app object
-app =   Flask(__name__)
-
-
-ROOM_TYPE_IMAGE = {
-    "deluxe": "static/delux.png",
-    "ilima": "static/ilima.png",
-    "ocean view":"static/ocean view room.png",
-    "partial ocean view": "static/partial ocean view room.png",
-    "resort view": "static/resort view.png",
+# =============================================================================
+# ROOM DATA - Single source of truth for room information
+# =============================================================================
+# Each room has a display name (key), nightly price, and image filename
+ROOMS = {
+    "Deluxe Ocean Front": {"price": 395, "image": "deluxe.png"},
+    "Ilima Ocean West": {"price": 345, "image": "ilima.png"},
+    "Ocean View": {"price": 295, "image": "ocean view room.png"},
+    "Partial Ocean View": {"price": 219, "image": "partial ocean view room.png"},
+    "Resort View": {"price": 189, "image": "resort view.png"},
 }
 
-def image_url_for_room(room_type: str) -> str:
-    # Fallback image if unknown type
-    filename = ROOM_TYPE_IMAGE.get(room_type, "rooms/default.png")
-    rel = url_for('static', filename=filename)  # e.g., /static/rooms/studio.png
-    # Make it absolute (https://yourdomain.com/static/rooms/studio.png)
-    return f"{request.url_root.rstrip('/')}{rel}"
+def get_room_image(room_name: str) -> str:
+    """
+    Get the image filename for a given room name.
+
+    Args:
+        room_name: The display name of the room (e.g., "Deluxe Ocean Front")
+
+    Returns:
+        The image filename, or a default if room not found
+    """
+    room = ROOMS.get(room_name)
+    if room:
+        return room["image"]
+    return "halekoa_Hotel.webp"  # Fallback to hotel image
 
 
 #email configurations
@@ -87,52 +96,62 @@ def submit():
 def rooms():
     return render_template('rooms.html')
 
-@app.route('/trip_summary', methods = ["GET" , "POST"])
+@app.route('/trip_summary', methods=["GET", "POST"])
 def trip_summary():
     if request.method == "POST":
-        stay_raw = request.form.get("Rooms")  # looks like "Deluxe Ocean Front|249.99"
+        # Parse room selection (format: "Room Name|price")
+        stay_raw = request.form.get("Rooms")
         room_name, room_price = stay_raw.split("|")
         room_price = float(room_price)
-        room_price = round(room_price,2)
-        dates = request.form.get("dates")
-        ticket_price = int(request.form.get("ticketPrice")) 
-        # Get all selected activities (checkboxes with same name return a list)
-        activities_raw = request.form.getlist("activity")
+        room_price = round(room_price, 2)
 
-        # Parse each activity and calculate total cost
+        # Look up the room image using our helper function
+        room_image = get_room_image(room_name)
+
+        # Get form data
+        traveler_name = request.form.get("name")
+        ticket_price = int(request.form.get("ticketPrice"))
+        num_nights = int(request.form.get("num_nights"))
+        email = request.form.get("userEmail")
+
+        # Parse activities (format: "activity_name|cost")
+        activities_raw = request.form.getlist("activity")
         activities = []
         activityCost = 0
         for item in activities_raw:
             name, cost = item.split("|")
             activities.append(name)
             activityCost += int(cost)
-
-        # Join activity names for display
         activity = ", ".join(activities) if activities else "None"
-        
-        traveler_name = request.form.get("name")
-        num_nights = int(request.form.get("num_nights"))
-        cost_of_stay = num_nights * room_price
-        # copilot suggestion: use datetime and timedelta to calculate end date
-        start_date = request.form.get("dates") 
-        end_date = datetime.strptime(start_date, "%Y-%m-%d") + timedelta (days=num_nights)
+
+        # Calculate date range
+        start_date = request.form.get("dates")
+        end_date = datetime.strptime(start_date, "%Y-%m-%d") + timedelta(days=num_nights)
         dates = f"{start_date} to {end_date.strftime('%Y-%m-%d')}"
-        
-        email = request.form.get("userEmail")
-       
+
+        # Calculate costs
+        cost_of_stay = num_nights * room_price
         sub_total = cost_of_stay + ticket_price + activityCost
-        
-        tax = sub_total * .1025
-        tax = round(tax,2)
+        tax = round(sub_total * 0.1025, 2)
         total = sub_total + tax
-        #Formulate the email message
-        #msg = Message("This is a test",sender = "rickytic12@gmail.com", recipients = [email])
-        #msg.body = "TEST 1"
-        #mail.send(msg)
-        
-    return render_template('trip_summary.html', type = room_name, cost = room_price, traveler_name = traveler_name,cost_of_stay = cost_of_stay,dates = dates,email = email,
-                           ticket_price = ticket_price, activity = activity, activityCost = activityCost, sub_total = sub_total,
-                           tax = tax, total = total)
+
+    return render_template(
+        'trip_summary.html',
+        traveler_name=traveler_name,
+        type=room_name,
+        room_image=room_image,  # NEW: pass room image to template
+        cost=room_price,
+        dates=dates,
+        num_nights=num_nights,
+        cost_of_stay=cost_of_stay,
+        ticket_price=ticket_price,
+        activity=activity,
+        activityCost=activityCost,
+        sub_total=sub_total,
+        tax=tax,
+        total=total,
+        email=email
+    )
 
 
 

@@ -132,6 +132,22 @@
     const SERVICE_ID = "service_i62n0vq";
     const TEMPLATE_ID = "template_wmznpsj";
 
+    // Room image mapping - mirrors the Python ROOMS dictionary
+    const ROOM_IMAGES = {
+        "Deluxe Ocean Front": "deluxe.png",
+        "Ilima Ocean West": "ilima.png",
+        "Ocean View": "ocean view room.png",
+        "Partial Ocean View": "partial ocean view room.png",
+        "Resort View": "resort view.png"
+    };
+
+    // Helper function to get absolute URL for room image
+    function getRoomImageUrl(roomType) {
+        const imageName = ROOM_IMAGES[roomType] || "halekoa_Hotel.webp";
+        // Build absolute URL using current origin
+        return `${window.location.origin}/static/${encodeURIComponent(imageName)}`;
+    }
+
     const form = document.getElementById("Tripform");
 
     form.addEventListener("submit", function(event) {
@@ -142,6 +158,10 @@
         const parts = roomData.split("|");
         const roomType = parts[0];
         const roomCost = Number(parseFloat(parts[1]).toFixed(2));
+
+        // Get the room image URL for the email
+        const roomImageUrl = getRoomImageUrl(roomType);
+        console.log("Room Image URL:", roomImageUrl);
 
         // Calculate start and end date based on start date and number of nights
         const startDate = document.getElementById("dates").value;
@@ -186,6 +206,7 @@
             ticketPrice: document.getElementById("ticketPrice").value,
             roomType: roomType,
             roomCost: roomCost,
+            roomImageUrl: roomImageUrl,  // NEW: room image URL for email
             nights: nights,
             comments: document.getElementById("comments").value,
             costOfStay: costOfStay,
@@ -195,6 +216,9 @@
             acost: acost,
             subTotal: subTotal
         };
+
+        // Debug: log the data being sent
+        console.log("EmailJS data:", data);
 
         emailjs.send(SERVICE_ID, TEMPLATE_ID, data)
         .then(response => {
