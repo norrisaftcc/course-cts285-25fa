@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask Index Page</title>
+    
+</head>
+<body>
+    <nav>
+    <a href="{{ url_for('rooms') }}">Rooms</a>
+</nav>
+    <br> <br> 
+
+        <h1> Trip summary for: {{ traveler_name }} </h1>
+        <br> <br> <br>
+        <!--<img src = "{{url_for ("static" , filename = "halekoa_Hotel.webp")}}">-->
+        <p>Dates of Travel: {{ dates }}</p>
+        <p>Room type: {{ type }}</p>
+        <p>Room cost per night: ${{"{:,.2f}".format(cost)}}</p>
+        <p>Ticket Price ${{"{:,.2f}".format(ticket_price) }}</p>
+        <p>Activities: {{activity}}</p>
+        <p>Activities Cost: ${{"{:,.2f}".format(activityCost)}}</p>
+        <p>Total cost for stay: ${{"{:,.2f}".format(cost_of_stay)}}</p>
+        <p>Show Email: {{email }}</p>
+        <br><br>
+        <p>Sub Total: ${{"{:,.2f}".format(sub_total)}}</p>
+        <p>Tax: ${{"{:,.2f}".format(tax)}}</p>
+        <br><br>
+        <p><strong>TOTAL: ${{"{:,.2f}".format(total)}}</strong></p>
+        <p>Show Email: {{email }}</p>
+
+
+        <p><a href="{{ url_for('home_page') }}">Return to home page</a></p>
+    
+</body>
+</html>

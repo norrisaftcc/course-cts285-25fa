@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Page Title</title>
+</head>
+
+<body>
+
+<!--Your HTML tags will start here-->
+
+
+ <h1>These are the rooms available at the Halekoa.</h1>
+ <p>This is a paragraph.</p>
+
+<table border="2">
+  <tr>
+    
+    <th>Available Room</th>
+  </tr>
+  <tr>
+    
+    <td><img src = "{{url_for ("static" , filename = "deluxe.png")}}"></td>
+  </tr>
+  <tr>
+    
+    <td><img src = "{{url_for ("static" , filename = "ilima.png")}}"></td>
+  </tr>
+  <tr>
+    
+	<td><img src = "{{url_for ("static" , filename = "ocean view room.png")}}"></td>
+	
+  </tr>
+  <tr>
+    
+	<td><img src = "{{url_for ("static" , filename = "partial ocean view room.png")}}"></td>
+		
+  </tr>
+  <tr>
+    
+	<td><img src = "{{url_for ("static" , filename = "resort view.png")}}">
+</td>
+	
+  </tr>
+  
+</table>
+
+<br><br><br><br>
+
+<form id="Tripform" action="/trip_summary" method="POST" style="background-color: #ffffff; padding: 20px; border-radius: 10px; border: 2px solid">
+            <label for="name">Name:</label><br>
+            <input type="text" id="name" name="name" required style="margin-bottom: 10px;"><br><br>
+
+            <!-- Dates of Travel -->
+            <label for="dates">Dates of Travel:</label><br>
+            <input type="date" id="dates" name="dates" required style="margin-bottom: 10px;"><br><br>
+
+            <!-- Price of Tickets -->
+            <label for="ticketPrice">Price of Tickets:</label><br>
+            <input type="number" id="ticketPrice" name="ticketPrice" placeholder="$" required style="margin-bottom: 10px;"><br><br>
+
+            <!-- Places to Stay -->
+            <label for="Rooms">Type of Room:</label><br>
+            <select id="Rooms" name="Rooms" style="margin-bottom: 10px;">
+                <option value="Deluxe Ocean Front|395">Deluxe Ocean Front</option>
+                <option value="Ilima Ocean West|345">Ilima Ocean West</option>
+                <option value="Ocean View|295">Ocean View</option>
+                <option value="Partial Ocean View|219">Partial Ocean View</option>
+                <option value="Resort View|189">Resort View</option>
+                
+                
+                
+
+            </select><br><br>
+
+            <!-- Prices of Hotels/B&B -->
+            <label for="num_nights">Number of nights in the hotel:</label><br>
+            <input type="number" id="num_nights" name="num_nights"  required style="margin-bottom: 10px;"><br><br>
+
+            <!-- Things to Do -->
+            <label>Things to Do:</label><br>
+            <input type="checkbox" name="activity" value="surfing|125"> Surfing<br>
+            <input type="checkbox" name="activity" value="hiking|75"> Hiking<br>
+            <input type="checkbox" name="activity" value="snorkeling|149"> Snorkeling<br>
+            <input type="checkbox" name="activity" value="luau|130"> Attend a Luau<br><br>
+
+            <!-- Radio Buttons with Different Colors -->
+            <label>Preferred Travel Style:</label><br>
+            <label style="color: white; background-color: #ff6347; padding: 5px;">
+                <input type="radio" name="style" value="luxury"> Luxury
+            </label><br>
+            <label style="color: white; background-color: #4682b4; padding: 5px;">
+                <input type="radio" name="style" value="budget"> Budget
+            </label><br>
+            <label style="color: white; background-color: #32cd32; padding: 5px;">
+                <input type="radio" name="style" value="adventure"> Adventure
+            </label><br><br>
+
+            
+            <label for="userEmail">Your Email:</label>
+            <input type="email" id="userEmail" name="userEmail" placeholder="Enter your email" required>
+            <br><br>
+
+            <!-- Comment Box -->
+            <label for="comments">Additional Comments:</label><br>
+            <textarea id="comments" name="comments" rows="4" cols="50" style="background-color: lightgreen; color:Black;"></textarea><br><br>
+
+            <!-- Submit and Reset Buttons -->
+            <input type="submit" value="Submit" style="background-color: #00ced1; color: white; padding: 10px; border: none; border-radius: 5px;">
+            <input type="reset" value="Reset" style="background-color: #ff4500; color: white; padding: 10px; border: none; border-radius: 5px;"><br><br>
+
+            <!-- Mailto Link -->
+            <a href="mailto:example@example.com" style="color: #008080">Email me</a> 
+          </fieldset>
+    </form>
+
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/RUb-weK-_dI?si=sKNHSHih5JZt4ZI5" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+<!--Your HTML tags will end here-->
+
+
+<!-- EmailJS SDK -->
+<script type="text/javascript"
+        src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+<!-- Your JavaScript -->
+<script>
+    console.log("Initializing EmailJS…");
+    emailjs.init("ctanCThOR0TUbRkv-");
+
+    const SERVICE_ID = "service_i62n0vq";
+    const TEMPLATE_ID = "template_wmznpsj";
+
+    const form = document.getElementById("Tripform");
+
+    form.addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        // get raw values
+        const roomData = document.getElementById("Rooms").value;
+        const parts = roomData.split("|");
+        const roomType = parts[0];
+        const roomCost = Number(parseFloat(parts[1]).toFixed(2));
+
+        // Calculate start and end date based on start date and number of nights
+        const startDate = document.getElementById("dates").value;
+        const nights = parseInt(document.getElementById("num_nights").value);
+        // append dates into a single string
+        const endDate = new Date(new Date(startDate).getTime() + nights * 24 * 60 * 60 * 1000);
+        const startAndEndDate = `${startDate} to ${endDate.toISOString().split('T')[0]}`;
+
+        // Get all checked activity checkboxes
+        const checkedActivities = document.querySelectorAll('input[name="activity"]:checked');
+        const activityNames = [];
+        let activityCost = 0;
+        checkedActivities.forEach(function(checkbox) {
+            const parts = checkbox.value.split("|");
+            activityNames.push(parts[0]);
+            activityCost += parseInt(parts[1]);
+        });
+        const aname = activityNames.join(", ") || "None";
+        const acost = activityCost;
+        // debug
+        console.log("Activity Data");
+        console.log(aname);
+        console.log(acost);
+
+        const costOfStay = Number((nights * roomCost).toFixed(2));
+        const ticketPrice = Number(document.getElementById("ticketPrice").value);
+        const subTotal = Number((costOfStay + ticketPrice + activityCost).toFixed(2));
+        const tax = Number((subTotal * 0.1025).toFixed(2));
+        const totalCostOfStay = Number((subTotal + tax).toFixed(2));
+
+        //Turn numeric values back into strings so we can have comma separators
+        //const ticketPrice = ticketPrice.toLocaleString('en-US');
+        //const tax = tax.toLocaleString('en-US');
+        //const totalCostOfStay = totalCostOfStay.toLocaleString('en-US');
+
+
+
+        const data = {
+            to_email: document.getElementById("userEmail").value,
+            name: document.getElementById("name").value,
+            dates: startAndEndDate,
+            ticketPrice: document.getElementById("ticketPrice").value,
+            roomType: roomType,
+            roomCost: roomCost,
+            nights: nights,
+            comments: document.getElementById("comments").value,
+            costOfStay: costOfStay,
+            tax: tax,
+            totalCostOfStay: totalCostOfStay,
+            aname: aname,
+            acost: acost,
+            subTotal: subTotal
+        };
+
+        emailjs.send(SERVICE_ID, TEMPLATE_ID, data)
+        .then(response => {
+            console.log("SUCCESS!", response);
+            form.submit(); // now safe
+        })
+        .catch(error => {
+            console.log("FAILED...", error);
+            form.submit(); // still sends data to Flask
+        });
+    });
+</script>
+
+
+</body>
+
+</html>
