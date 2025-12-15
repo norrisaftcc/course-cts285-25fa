@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask Index Page</title>
+    
+</head>
+<body style="background-image: url('{{ url_for('static', filename='rainbow_map.jpg') }}');
+             background-size: cover;
+             background-repeat: no-repeat;">
+    <nav>
+    <h2><a style="color: lime;" href="{{ url_for('rooms') }}">Rooms</a></h2>
+</nav>
+    <br> <br> 
+
+        <h1 style="color: white;"> Welcome!  Your Dream Vacation starts here </h1>
+        <br> <br> <br>
+        <!--img src = "{{url_for ("static" , filename = "halekoa_Hotel.webp")}}">-->
+
+        
+    
+</body>
+</html>
